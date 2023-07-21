@@ -22,9 +22,7 @@ class Status(object):
         self.loops = dict([])
 
     def __str__(self):
-        return ("node2com : " + str(self.node2com) + " degrees : "
-                + str(self.degrees) + " internals : " + str(self.internals)
-                + " total_weight : " + str(self.total_weight))
+        return f"node2com : {str(self.node2com)} degrees : {str(self.degrees)} internals : {str(self.internals)} total_weight : {str(self.total_weight)}"
 
     def copy(self):
         """Perform a deep copy of status"""
@@ -37,7 +35,6 @@ class Status(object):
 
     def init(self, graph, weight, part=None):
         """Initialize the status of a graph with every node in one community"""
-        count = 0
         self.node2com = dict([])
         self.total_weight = 0
         self.degrees = dict([])
@@ -45,18 +42,17 @@ class Status(object):
         self.internals = dict([])
         self.total_weight = graph.size(weight=weight)
         if part is None:
-            for node in graph.nodes():
+            for count, node in enumerate(graph.nodes()):
                 self.node2com[node] = count
                 deg = float(graph.degree(node, weight=weight))
                 if deg < 0:
-                    error = "Bad graph type ({})".format(type(graph))
+                    error = f"Bad graph type ({type(graph)})"
                     raise ValueError(error)
                 self.degrees[count] = deg
                 self.gdegrees[node] = deg
                 edge_data = graph.get_edge_data(node, node, default={weight: 0})
                 self.loops[node] = float(edge_data.get(weight, 1))
                 self.internals[count] = self.loops[node]
-                count += 1
         else:
             for node in graph.nodes():
                 com = part[node]
@@ -68,11 +64,8 @@ class Status(object):
                 for neighbor, datas in graph[node].items():
                     edge_weight = datas.get(weight, 1)
                     if edge_weight <= 0:
-                        error = "Bad graph type ({})".format(type(graph))
+                        error = f"Bad graph type ({type(graph)})"
                         raise ValueError(error)
                     if part[neighbor] == com:
-                        if neighbor == node:
-                            inc += float(edge_weight)
-                        else:
-                            inc += float(edge_weight) / 2.
+                        inc += float(edge_weight) if neighbor == node else float(edge_weight) / 2.
                 self.internals[com] = self.internals.get(com, 0) + inc
