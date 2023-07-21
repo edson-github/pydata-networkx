@@ -6,10 +6,7 @@ import sys
 
 
 def check_import(packagename):
-    if packagename in (name for _, name, _ in iter_modules()):
-        return True
-    else:
-        return False
+    return packagename in (name for _, name, _ in iter_modules())
 
 packages = ['networkx', 'numpy', 'matplotlib', 'pandas',
             'jupyter']

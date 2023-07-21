@@ -291,11 +291,10 @@ def generate_dendrogram(graph,
     current_graph = graph.copy()
     status = Status()
     status.init(current_graph, weight, part_init)
-    status_list = list()
     __one_level(current_graph, status, weight, resolution, randomize)
     new_mod = __modularity(status)
     partition = __renumber(status.node2com)
-    status_list.append(partition)
+    status_list = [partition]
     mod = new_mod
     current_graph = induced_graph(partition, current_graph, weight)
     status.init(current_graph, weight)
